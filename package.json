@@ -1,37 +1,19 @@
 {
   "name": "b-doctor-be",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "server": "node --env-file=.env --watch server.js",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "node --env-file=.env server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node --watch --env-file=.env server.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "mysql2": "^3.12.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.19.0",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.19.0",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.18",
-    "globals": "^15.14.0",
-    "vite": "^6.1.0"
-  },
-  "description": "",
-  "main": "eslint.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "mysql2": "^3.12.0"
+  }
 }
