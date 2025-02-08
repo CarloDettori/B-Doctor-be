@@ -42,9 +42,34 @@ server.js:
     7.5 creiamo il collegameto al server:
         -server.listen(PORT, () => {console.log(`Server is running on http://localhost:${PORT})}`);});
 
-8 creazione routing
-    8.1creazione cartella routes
-    8.2creazione
+8 creazione di controllers   
+    8.1 creazione cartella routes 
+    8.2 creazione file <...>Controller
+    8.3 creazione rotte 
+        -index: function index(req, res) {res.send("sono get")};
+        -show: function show(req, res) {res.send("sono getID")}
+        -store: function store(req, res) {res.send("sono post")}
+        -destroy: function destroy(req, res) {res.send("sono delete")}
+    8.4 esportazione rotte dal controller
+        -export {index, show, store, destroy}
+
+9 creazione delle rotte
+    9.1 creazione cartella routes 
+    9.2 creazione file <...>Router
+    9.4 inizializzazione variabili e importazioni necessarie
+        -import express from "express";
+        -import { index, show, store, destroy } from "../controllers/<...>Controller.js";
+        -const <...>Router = express.Router();
+    9.5 creazione rotte 
+        -index: <...>Router.get("/", index);
+        -show: <...>Router.get("/:id", show);
+        -store: <...>Router.post("/", store);
+        -destroy: <...>Router.delete("/:id", destroy);
+    9.6 esportazione <...>Router
+        -export default doctorRouter;
+
+e niente...
+
 
 
         
