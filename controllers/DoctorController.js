@@ -1,5 +1,7 @@
+import connection_db from "../connection";
 
 function index(req, res) {
+    const sql = "SELECT *.doctors, AVG(vote.reviews) AS  FROM doctors,  "
     res.send("sono get")
 }
 function show(req, res) {
