@@ -1,8 +1,16 @@
-import connection_db from "../connection";
+import connection_db from "../connection.js";
 
 function index(req, res) {
-    const sql = "SELECT *.doctors, AVG(vote.reviews) AS  FROM doctors,  "
-    res.send("sono get")
+    const sql = `SELECT *.doctors, AVG(vote.reviews) AS doctor_average FROM doctors
+    JOIN reviews
+    ON doctors.id = rewiews.id_doctor
+    ORDERED BY doctor_average DESC`
+    connection_db.query(sql, (err, results) => {
+        res.json({
+            lenght: results.lenght,
+            doctors: results
+        })
+    })
 }
 function show(req, res) {
     res.send("sono getID")

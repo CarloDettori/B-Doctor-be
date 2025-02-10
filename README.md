@@ -68,6 +68,9 @@ server.js:
     9.6 esportazione <...>Router
         -export default doctorRouter;
 
+10 collegamento database
+    10.1
+
 e niente...
 
 
