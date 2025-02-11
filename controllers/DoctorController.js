@@ -4,10 +4,16 @@ import connection_db from '../connection.js'
 // INDEX FUNCTION TO SHOW ALL DOCTORS
 function index(req, res) {
 
-    const sql = ` SELECT  doctors.*, AVG(reviews.vote) AS "vote_average" FROM doctors
-                  JOIN reviews ON doctors.id = reviews.id_doctor
-                  GROUP BY doctors.id 
-                  ORDER BY vote_average DESC`
+    const sql = ` SELECT 
+    doctors.*, 
+    GROUP_CONCAT(DISTINCT specializations.name ORDER BY specializations.name SEPARATOR ', ') AS specializations,
+    AVG(reviews.vote) AS vote_average 
+FROM doctors
+JOIN reviews ON doctors.id = reviews.id_doctor
+JOIN doc_spec ON doctors.id = doc_spec.id_doctor
+JOIN specializations ON specializations.id = doc_spec.id_specialization
+GROUP BY doctors.id 
+ORDER BY vote_average DESC;`
 
 
     connection_db.query(sql, (err, results) => {
