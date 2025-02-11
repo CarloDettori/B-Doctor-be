@@ -26,10 +26,13 @@ function index(req, res) {
     })
 }
 
+
+
+
 // SHOW FUNCTION TO SHOW SINGLE DOCTOR
 function show(req, res) {
 
-    const id = req.params.id
+    const id = parseInt(req.params.id);
 
     const sqlSingleDoctor = ` SELECT  doctors.*, AVG(reviews.vote) AS "vote_avarage" FROM doctors
     JOIN reviews ON doctors.id = reviews.id_doctor
@@ -37,16 +40,31 @@ function show(req, res) {
     HAVING doctors.id = ?`
 
     connection_db.query(sqlSingleDoctor, [id], (err, results) => {
-
+        //Se c'è un errore ritorna un error 500
         if (err) { return res.status(500).json({ error: 'Internal error server' }) }
+        //Se l'elemento non è presente ritorna un error 404
+        if (!results[0]) return res.status(404).json({ error: "Doctor not found" });
+        //Altrimenti ritorna l'elemento ma prima dobbiamo estrarre le sue reviews
+        if (results[0]) {
+            //preparo la query
+            const sqlDoctorReviews = `SELECT * FROM reviews
+            WHERE id_doctor = ?`;
+            //salvo il dottore nella variabile doctor
+            const doctor = results[0];
+            //Esecuzione query
+            connection_db.query(sqlDoctorReviews, [id], (err, results2) => {
+                //Se c'è un errore ritorna un error 500
+                if (err) return res.status(500).json({ error: err });
+                //Salvo le reviews nella variabile reviews
+                doctor.reviews = results2;
+                //ritorno l'elemento
+                return res.json(doctor);
+            });
+        };
+    });
+};
 
-        if (results.length === 0) { return res.status(200).json({ message: 'No doctor Available' }) }
 
-        return res.json({ doctor: results })
-
-    })
-
-}
 
 function store(req, res) {
     res.send('sono post')
