@@ -4,20 +4,20 @@ import connection_db from '../connection.js'
 // INDEX FUNCTION TO SHOW ALL DOCTORS
 function index(req, res) {
 
-    const sql = ` SELECT  doctors.*, AVG(reviews.vote) AS "vote_avarage" FROM doctors
+    const sql = ` SELECT  doctors.*, AVG(reviews.vote) AS "vote_average" FROM doctors
                   JOIN reviews ON doctors.id = reviews.id_doctor
                   GROUP BY doctors.id 
-                  ORDER BY vote_avarage DESC`
+                  ORDER BY vote_average DESC`
 
     connection_db.query(sql, (err, results) => {
 
-        if (err) { res.status(500).json({ error: 'Internal error server' }) }
+        if (err) { return res.status(500).json({ error: 'Internal error server' }) }
 
-        if (results.length === 0) { res.status(200).json({ message: 'No doctors Available' }) }
+        if (results.length === 0) { return res.status(200).json({ message: 'No doctors Available' }) }
 
-        res.json(
+        return res.json(
             {
-                lenght: results.length,
+                length: results.length,
                 doctors: results,
             }
         )
@@ -25,9 +25,7 @@ function index(req, res) {
     })
 }
 
-
-
-
+// SHOW FUNCTION TO SHOW SINGLE DOCTOR
 function show(req, res) {
 
     const id = req.params.id
@@ -39,15 +37,11 @@ function show(req, res) {
 
     connection_db.query(sqlSingleDoctor, [id], (err, results) => {
 
-        if (err) { res.status(500).json({ error: 'Internal error server' }) }
+        if (err) { return res.status(500).json({ error: 'Internal error server' }) }
 
-        if (results.length === 0) { res.status(200).json({ message: 'No doctor Available' }) }
+        if (results.length === 0) { return res.status(200).json({ message: 'No doctor Available' }) }
 
-        res.json(
-            {
-                doctor: results,
-            }
-        )
+        return res.json({ doctor: results })
 
     })
 
