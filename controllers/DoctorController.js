@@ -28,7 +28,6 @@ function index(req, res) {
 
 
 
-
 // SHOW FUNCTION TO SHOW SINGLE DOCTOR
 function show(req, res) {
 
@@ -73,7 +72,7 @@ function store(req, res) {
 
 function destroy(req, res) {
 
-    const id = req.params.id
+    const id = parseInt(req.params.id)
     const sqlSingleDoctor = `DELETE FROM doctors WHERE id = ?`
 
     connection_db.query(sqlSingleDoctor, [id], (err, results) => {
