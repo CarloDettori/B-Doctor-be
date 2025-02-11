@@ -9,6 +9,7 @@ function index(req, res) {
                   GROUP BY doctors.id 
                   ORDER BY vote_average DESC`
 
+
     connection_db.query(sql, (err, results) => {
 
         if (err) { return res.status(500).json({ error: 'Internal error server' }) }
@@ -47,7 +48,6 @@ function show(req, res) {
 
 }
 
-
 function store(req, res) {
     res.send('sono post')
 }
@@ -66,11 +66,7 @@ function destroy(req, res) {
             return res.status(400).json({ error: 'Is not possible delete this doctor, beacause he does not exist' })
         }
 
-        res.json(
-            {
-                doctor: results,
-            }
-        )
+        res.json({ doctor: results })
 
     })
 }
