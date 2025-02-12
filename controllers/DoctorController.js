@@ -70,16 +70,16 @@ function show(req, res) {
 
 
 
-function storeDoctor(req, res) {
-    res.send('sono post')
-}
+// function storeDoctor(req, res) {
+//     res.send('sono post')
+// }
 
 function storeReview(req, res) {
     const id = parseInt(req.params.id)
-    const { vote, description } = req.body;
-    sqlAddReview = ` INSERT INTO reviews (vote, description, id_doctor)
+    const { vote, description, id_patient } = req.body;
+    const sqlAddReview = ` INSERT INTO reviews (vote, description, id_doctor, id_patient)
             VALUES (?,?,?,?)`
-    connection_db.query(sqlAddReview, [vote, description, id], (err, results) => {
+    connection_db.query(sqlAddReview, [vote, description, id, id_patient], (err, results) => {
 
         if (err) { return res.status(500).json({ error: 'Internal error server' }) }
         res.status(204)
@@ -128,4 +128,4 @@ function destroyReview(req, res) {
     })
 }
 
-export { index, show, storeReview, storeDoctor, destroyDoctor, destroyReview }
+export { index, show, storeReview, destroyDoctor, destroyReview }
