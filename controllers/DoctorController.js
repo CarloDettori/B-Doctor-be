@@ -75,7 +75,17 @@ function storeDoctor(req, res) {
 }
 
 function storeReview(req, res) {
-    res.send('sono post')
+    const id = parseInt(req.params.id)
+    const { vote, description } = req.body;
+    sqlAddReview = ` INSERT INTO reviews (vote, description, id_doctor)
+            VALUES (?,?,?,?)`
+    connection_db.query(sqlAddReview, [vote, description, id], (err, results) => {
+
+        if (err) { return res.status(500).json({ error: 'Internal error server' }) }
+        res.status(204)
+
+    })
+
 }
 
 

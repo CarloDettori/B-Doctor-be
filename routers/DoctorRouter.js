@@ -8,7 +8,7 @@ doctorRouter.get("/", index);
 doctorRouter.get("/:id", show);
 
 doctorRouter.post("/", storeDoctor);
-doctorRouter.post("/review", storeReview);
+doctorRouter.post("/review/:id", storeReview);
 
 doctorRouter.delete("/:id", destroyDoctor);
 doctorRouter.delete("/review/:id", destroyReview);
