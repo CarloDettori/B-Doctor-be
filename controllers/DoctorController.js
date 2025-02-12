@@ -68,8 +68,6 @@ function show(req, res) {
     });
 };
 
-
-
 // function storeDoctor(req, res) {
 //     res.send('sono post')
 // }
