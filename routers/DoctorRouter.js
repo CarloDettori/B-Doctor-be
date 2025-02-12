@@ -1,13 +1,13 @@
 
 import express from "express";
-import { index, show, storeReview, destroyDoctor, destroyReview } from "../controllers/DoctorController.js";
+import { index, show, storeReview, storeDoctor, destroyDoctor, destroyReview } from "../controllers/DoctorController.js";
 const doctorRouter = express.Router();
 
 doctorRouter.get("/", index);
 
 doctorRouter.get("/:id", show);
 
-//doctorRouter.post("/", storeDoctor);
+doctorRouter.post("/", storeDoctor);
 doctorRouter.post("/review/:id", storeReview);
 
 doctorRouter.delete("/:id", destroyDoctor);

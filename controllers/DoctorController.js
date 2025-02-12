@@ -68,9 +68,16 @@ function show(req, res) {
     });
 };
 
-// function storeDoctor(req, res) {
-//     res.send('sono post')
-// }
+function storeDoctor(req, res) {
+
+    const { name, surname, email, phone } = req.body
+    const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number) VALUES 
+                          (?,?,?,?,?,?)`
+    connection_db.query(sqlAddDoctor, [name, surname, email, phone, office_address, serial_number], (err, results2) => {
+        if (err) return res.status(500).json({ error: err }); //Se c'è un errore ritorna un error 500
+        return res.status(200)
+    })
+}
 
 function storeReview(req, res) {
     const id = parseInt(req.params.id)
@@ -80,7 +87,7 @@ function storeReview(req, res) {
     connection_db.query(sqlAddReview, [vote, description, id], (err, results) => {
 
         if (err) { return res.status(500).json({ error: 'Internal error server' }) }
-        res.status(200)
+        return res.status(200)
 
     })
 
@@ -117,13 +124,10 @@ function destroyReview(req, res) {
             return res.status(400).json({ error: 'Is not possible delete this review, beacause he does not exist' })
         }
 
-        res.json(
-            {
-                review: results,
-            }
-        )
+        res.json({ review: results })
 
     })
+
 }
 
-export { index, show, storeReview, destroyDoctor, destroyReview }
+export { index, show, storeReview, storeDoctor, destroyDoctor, destroyReview }
