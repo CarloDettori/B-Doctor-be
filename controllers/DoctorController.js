@@ -4,15 +4,15 @@ import connection_db from '../connection.js'
 // INDEX FUNCTION TO SHOW ALL DOCTORS
 function index(req, res) {
 
-    // CREAZIONE DELLA QUERY SQL
-    const sql = ` SELECT 
+    // CREAZIONE DELLA QUERY SQL PER MOSTRARE LA LISTA DEI DOTTORI E LE SUE RECENSIONI CORRELATE
+    const sql = `SELECT 
     doctors.*, 
     GROUP_CONCAT(DISTINCT specializations.name ORDER BY specializations.name SEPARATOR ', ') AS specializations,
     AVG(reviews.vote) AS vote_average 
     FROM doctors
     JOIN reviews ON doctors.id = reviews.id_doctor
-    JOIN doc_spec ON doctors.id = doc_spec.id_doctor
-    JOIN specializations ON specializations.id = doc_spec.id_specialization
+    JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
+    JOIN specializations ON specializations.id = x_doctor_specialization.id_specialization
     GROUP BY doctors.id 
     ORDER BY vote_average DESC;`
 
@@ -70,26 +70,72 @@ function show(req, res) {
 
 function storeDoctor(req, res) {
 
-    const { name, surname, email, phone } = req.body
+    const { name, surname, email, phone, office_address, serial_number } = req.body
+
+    if (name.trim().length < 3) {
+        return res.json({ error: 'The name must contain at least 3 characters' })
+    } else if (surname.trim().length < 3) {
+        return res.json({ error: 'The surname must contain at least 3 characters' })
+    } else if (!email.includes('@') || !email.includes('.')) {
+        return res.json({ error: 'The email must contain at least one "@" and a "."' })
+    } else if (phone.trim().length < 11 || phone.trim().length > 15) {
+        return res.json({ error: 'A telephone number is made up of numbers between 10 and 15' })
+    } else if (isNaN(phone)) {
+        return res.json({ error: 'The telephone number can only consist of numbers' })
+    } else if (serial_number.trim().length !== 7) {
+        return res.json({ error: 'The serial number must be 7 characters' })
+    }
+
     const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number) VALUES 
                           (?,?,?,?,?,?)`
+
     connection_db.query(sqlAddDoctor, [name, surname, email, phone, office_address, serial_number], (err, results2) => {
-        if (err) return res.status(500).json({ error: err }); //Se c'è un errore ritorna un error 500
-        return res.status(200)
+        if (err) return res.status(500).json({ error: err });
+        if (results2.affectedRows === 0)
+            return res.status(404).json({ error: "Cannot add doctors" })
+        if (results2.affectedRows === 1)
+            return res.status(200).json({ success: "Doctor added with success" })
     })
 }
 
 function storeReview(req, res) {
-    const id = parseInt(req.params.id)
-    const { vote, description } = req.body;
-    const sqlAddReview = ` INSERT INTO reviews (vote, description, id_doctor)
-            VALUES (?,?,?)`
-    connection_db.query(sqlAddReview, [vote, description, id], (err, results) => {
 
-        if (err) { return res.status(500).json({ error: 'Internal error server' }) }
-        return res.status(200)
+    // Recuperiamo l'id dalla url che ci servirà per trovare l'id specifico del medico al quale vogliamo lasciare la recensione.
+    const id = parseInt(req.params.id)
+
+    // Destrutturiamo il body della richiesta.
+    let { name_patient, vote, description } = req.body;
+
+    // Se il nome esiste e, dopo aver rimosso gli spazi, contiene del testo, lo mantiene; altrimenti, lo imposta su "Anonymous"
+    name_patient = name_patient && name_patient.trim() ? name_patient : "Anonymous"
+    if (name_patient.length < 3) // Se la lunghezza del testo inserito è minore di 3 allora ritorna errore
+        return res.status(400).json({ error: 'The length name must be min. 3 characters' });
+
+    // Effettuiamo dei controlli sui voti 
+    if (!vote || isNaN(vote) || vote < 1 || vote > 10) {
+        return res.status(400).json({ error: 'The vote must be a number between 1 to 10' });
+    }
+
+    // CONTROLLO SULLA LUNGHEZZA DEI CARATTERI DELLA DESCRIZIONE
+    description = description && description.trim() ? description : "No content available"
+    if (description.length > 5000)
+        return res.status(400).json({ error: 'The text must have max 5000 characters' });
+
+
+    const sqlAddReview = ` INSERT INTO reviews (name_patient, vote, description, id_doctor)
+            VALUES (?,?,?,?) `
+
+    connection_db.query(sqlAddReview, [name_patient, vote, description, id], (err, results) => {
+
+        if (err) { return res.status(500).json({ error: err }) }
+        if (results.affectedRows === 0)
+            return res.status(404).json({ error: "Cannot add review" })
+        if (results.affectedRows === 1)
+            return res.status(200).json({ success: "Review added with success" })
 
     })
+
+
 
 }
 
