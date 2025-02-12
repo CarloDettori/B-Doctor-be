@@ -54,12 +54,16 @@ function show(req, res) {
 }
 
 
-function store(req, res) {
+function storeDoctor(req, res) {
+    res.send('sono post')
+}
+
+function storeReview(req, res) {
     res.send('sono post')
 }
 
 
-function destroy(req, res) {
+function destroyDoctor(req, res) {
 
     const id = req.params.id
     const sqlSingleDoctor = `DELETE FROM doctors WHERE id = ?`
@@ -81,4 +85,26 @@ function destroy(req, res) {
     })
 }
 
-export { index, show, store, destroy }
+function destroyReview(req, res) {
+
+    const id = req.params.id
+    const sqlSingleReview = `DELETE FROM reviews WHERE id = ?`
+
+    connection_db.query(sqlSingleReview, [id], (err, results) => {
+
+        if (err) { return res.status(500).json({ error: 'Internal error server' }) }
+
+        if (results.effectedRows !== 1) {
+            return res.status(400).json({ error: 'Is not possible delete this review, beacause he does not exist' })
+        }
+
+        res.json(
+            {
+                review: results,
+            }
+        )
+
+    })
+}
+
+export { index, show, storeReview, storeDoctor, destroyDoctor, destroyReview }
