@@ -106,17 +106,17 @@ function storeReview(req, res) {
     // Destrutturiamo il body della richiesta.
     let { name_patient, vote, description } = req.body;
 
-    // Se il nome esiste e, dopo aver rimosso gli spazi, contiene del testo, lo mantiene; altrimenti, lo imposta su "Anonymous"
+    // 1) CONTROLLO SUL CONTENUTO DEL NOME
     name_patient = name_patient && name_patient.trim() ? name_patient : "Anonymous"
     if (name_patient.length < 3) // Se la lunghezza del testo inserito è minore di 3 allora ritorna errore
         return res.status(400).json({ error: 'The length name must be min. 3 characters' });
 
-    // Effettuiamo dei controlli sui voti 
+    // 2) CONTROLLI SUI VOTI 
     if (!vote || isNaN(vote) || vote < 1 || vote > 10) {
         return res.status(400).json({ error: 'The vote must be a number between 1 to 10' });
     }
 
-    // CONTROLLO SULLA LUNGHEZZA DEI CARATTERI DELLA DESCRIZIONE
+    // 3) CONTROLLO SULLA LUNGHEZZA DEI CARATTERI DELLA DESCRIZIONE E SUL CONTENUTO
     description = description && description.trim() ? description : "No content available"
     if (description.length > 5000)
         return res.status(400).json({ error: 'The text must have max 5000 characters' });
