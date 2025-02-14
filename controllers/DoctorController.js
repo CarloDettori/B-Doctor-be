@@ -41,7 +41,7 @@ function show(req, res) {
 
     const id = parseInt(req.params.id);
 
-    const sqlSingleDoctor = ` SELECT DISTINCT doctors.*, AVG(reviews.vote) AS "vote_avarage", GROUP_CONCAT(DISTINCT CONCAT(specializations.name) SEPARATOR ", ") FROM doctors
+    const sqlSingleDoctor = ` SELECT DISTINCT doctors.*, AVG(reviews.vote) AS "vote_avarage", GROUP_CONCAT(DISTINCT CONCAT(specializations.name) SEPARATOR ", ") AS specializations FROM doctors
     JOIN reviews ON doctors.id = reviews.id_doctor
     JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
     JOIN specializations ON x_doctor_specialization.id_specialization = specializations.id
