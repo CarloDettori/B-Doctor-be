@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import doctorRouter from "./routers/DoctorRouter.js"
+import { doctorRouter, specializationsRouter } from "./routers/DoctorRouter.js"
 const URL = process.env.URL
 const PORT = process.env.PORT || 3000
 const server = express()
@@ -12,6 +12,7 @@ server.use(express.static("public"))
 
 // Rotta doctors e rotta generica 
 server.use("/doctors", doctorRouter)
+server.use("/specializations", specializationsRouter)
 server.get("*", (req, res) => {
     res.send("SONO TUTTE LE ROTTE")
 })
