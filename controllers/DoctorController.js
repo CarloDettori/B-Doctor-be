@@ -41,9 +41,11 @@ function show(req, res) {
 
     const id = parseInt(req.params.id);
 
-    const sqlSingleDoctor = ` SELECT  doctors.*, AVG(reviews.vote) AS "vote_avarage" FROM doctors
+    const sqlSingleDoctor = ` SELECT DISTINCT doctors.*, AVG(reviews.vote) AS "vote_avarage", GROUP_CONCAT(DISTINCT CONCAT(specializations.name) SEPARATOR ", ") FROM doctors
     JOIN reviews ON doctors.id = reviews.id_doctor
-    GROUP BY doctors.id 
+    JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
+    JOIN specializations ON x_doctor_specialization.id_specialization = specializations.id
+    GROUP BY doctors.id
     HAVING doctors.id = ?`
 
     connection_db.query(sqlSingleDoctor, [id], (err, results) => {
