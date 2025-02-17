@@ -10,9 +10,9 @@ function index(req, res) {
     GROUP_CONCAT(DISTINCT specializations.name ORDER BY specializations.name SEPARATOR ', ') AS specializations,
     AVG(reviews.vote) AS vote_average 
     FROM doctors
-    JOIN reviews ON doctors.id = reviews.id_doctor
-    JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
-    JOIN specializations ON specializations.id = x_doctor_specialization.id_specialization
+    LEFT JOIN reviews ON doctors.id = reviews.id_doctor
+    LEFT JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
+    LEFT JOIN specializations ON specializations.id = x_doctor_specialization.id_specialization
     GROUP BY doctors.id 
     ORDER BY vote_average DESC;`
 
@@ -62,12 +62,12 @@ function show(req, res) {
 
     const id = parseInt(req.params.id);
 
-    const sqlSingleDoctor = ` SELECT DISTINCT doctors.*, AVG(reviews.vote) AS "vote_avarage", GROUP_CONCAT(DISTINCT CONCAT(specializations.name) SEPARATOR " | ") AS specializations FROM doctors
-    JOIN reviews ON doctors.id = reviews.id_doctor
-    JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
-    JOIN specializations ON x_doctor_specialization.id_specialization = specializations.id
-    GROUP BY doctors.id
-    HAVING doctors.id = ?`
+    const sqlSingleDoctor = ` SELECT DISTINCT doctors.*, COALESCE(AVG(reviews.vote), 0) AS vote_average, GROUP_CONCAT(DISTINCT CONCAT(specializations.name) SEPARATOR " | ") AS specializations FROM doctors
+    LEFT JOIN reviews ON doctors.id = reviews.id_doctor
+    LEFT JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
+    LEFT JOIN specializations ON specializations.id = x_doctor_specialization.id_specialization
+    WHERE doctors.id = ?
+    GROUP BY doctors.id`
 
     connection_db.query(sqlSingleDoctor, [id], (err, results) => {
 
@@ -220,7 +220,7 @@ function destroyReview(req, res) {
 
         if (err) { return res.status(500).json({ error: 'Internal error server' }) }
 
-        if (results.effectedRows !== 1) {
+        if (results.affectedRows !== 1) {
             return res.status(400).json({ error: 'Is not possible delete this review, beacause he does not exist' })
         }
 
