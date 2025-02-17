@@ -91,6 +91,40 @@ function show(req, res) {
     });
 };
 
+function showSpecialization(req, res) {
+
+    const id = parseInt(req.params.id);
+
+    const sqlSingleDoctor = `SELECT DISTINCT specializations.name AS spec_name, specializations.id AS spec_id, icon_url, doctors.id AS doc_id, doctors.name AS doc_name, doctors.surname AS doc_surname, doctors.email AS doc_email, doctors.phone AS doc_phone, doctors.office_address AS doc_office_addres, doctors.serial_number AS doc_serial_number
+    JOIN x_doctor_specialization
+    ON specializations.id = x_doctor_specialization.id_specialization
+    JOIN doctors
+    ON x_doctor_specialization.id_doctor = doctors.id;
+    GROUP BY spec_name
+    HAVING specializations.id = ?`
+
+    connection_db.query(sqlSingleDoctor, [id], (err, results) => {
+
+        if (err) { return res.status(500).json({ error: 'Internal error server' }) } //Se c'è un errore ritorna un error 500
+        if (!results[0]) return res.status(404).json({ error: "Doctor not found" }); //Se l'elemento non è presente ritorna un error 404
+
+        //Altrimenti ritorna l'elemento ma prima dobbiamo estrarre le sue reviews
+        if (results[0]) {
+
+            const sqlDoctorReviews = `SELECT * FROM reviews
+            WHERE id_doctor = ?`; //preparo la query
+            const doctor = results[0]; //salvo il dottore nella variabile doctor
+
+            // Esecuzione query per le reviews
+            connection_db.query(sqlDoctorReviews, [id], (err, results2) => {
+                if (err) return res.status(500).json({ error: err }); //Se c'è un errore ritorna un error 500
+                doctor.reviews = results2;  //Salvo le reviews nella variabile reviews
+                return res.json(doctor); //Ritorno l'elemento con le reviews aggiunte
+            });
+        };
+    });
+};
+
 function storeDoctor(req, res) {
 
     const { name, surname, email, phone, office_address, serial_number } = req.body
@@ -199,4 +233,4 @@ function destroyReview(req, res) {
 
 }
 
-export { index, indexSpecialization, show, storeReview, storeDoctor, destroyDoctor, destroyReview }
+export { index, indexSpecialization, show, showSpecialization, storeReview, storeDoctor, destroyDoctor, destroyReview }
