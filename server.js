@@ -13,6 +13,7 @@ server.use(express.static("public"))
 // Rotta doctors e rotta generica 
 server.use("/doctors", doctorRouter)
 server.use("/specializations", specializationsRouter)
+server.use("/specializations/:id", specializationsRouter)
 server.get("*", (req, res) => {
     res.send("SONO TUTTE LE ROTTE")
 })
