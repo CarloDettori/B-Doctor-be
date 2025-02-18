@@ -144,9 +144,9 @@ function storeDoctor(req, res) {
         return res.json({ error: 'The serial number must be 7 characters' })
     }
 
-    const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number) VALUES ("?","?","?","?","?","?")`
+    const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number, sex) VALUES ("?","?","?","?","?","?","?")`
 
-    connection_db.query(sqlAddDoctor, [name, surname, email, phone, office_address, serial_number], (err, results2) => {
+    connection_db.query(sqlAddDoctor, [name, surname, email, phone, office_address, serial_number, sex], (err, results2) => {
         if (err) return res.status(500).json({ error: err });
         if (results2.affectedRows === 0)
             return res.status(404).json({ error: "Cannot add doctors" })
