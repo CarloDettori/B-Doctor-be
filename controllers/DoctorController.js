@@ -107,9 +107,13 @@ function showSpecialization(req, res) {
         //Altrimenti ritorna l'elemento ma prima dobbiamo estrarre le sue reviews
         if (results[0]) {
 
-            const sqlSpecializationDoctors = `SELECT doctors.* FROM doctors
-	                                    JOIN x_doctor_specialization ON doctors.id = x_doctor_specialization.id_doctor
-	                                    WHERE id_specialization = ?`; //preparo la query
+            const sqlSpecializationDoctors = `SELECT doctors.*, AVG(reviews.vote) AS vote_average FROM doctors
+JOIN reviews
+ON reviews.id_doctor = doctors.id
+JOIN x_doctor_specialization
+ON doctors.id = x_doctor_specialization.id_doctor
+WHERE id_specialization = 33
+GROUP BY doctors.id`; //preparo la query
             const specialization = results[0]; //salvo il dottore nella variabile doctor
 
             // Esecuzione query per le reviews
