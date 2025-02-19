@@ -129,33 +129,61 @@ GROUP BY doctors.id`; //preparo la query
 };
 
 function storeDoctor(req, res) {
+    console.log("📩 Richiesta ricevuta per registrare un dottore:", req.body);
 
-    const { name, surname, email, phone, office_address, serial_number } = req.body
+    const { name, surname, email, phone, office_address, serial_number, sex, img_url } = req.body;
 
-    if (name.trim().length < 3) {
-        return res.json({ error: 'The name must contain at least 3 characters' })
-    } else if (surname.trim().length < 3) {
-        return res.json({ error: 'The surname must contain at least 3 characters' })
-    } else if (!email.includes('@') || !email.includes('.')) {
-        return res.json({ error: 'The email must contain at least one "@" and a "."' })
-    } else if (phone.trim().length < 10 || phone.trim().length > 15) {
-        return res.json({ error: 'A telephone number is made up of numbers between 10 and 15' })
-    } else if (isNaN(phone)) {
-        return res.json({ error: 'The telephone number can only consist of numbers' })
-    } else if (serial_number.trim().length !== 8) {
-        return res.json({ error: 'The serial number must be 8 characters' })
+    if (!name || !surname || !email || !phone || !office_address || !serial_number || !sex) {
+        console.log("❌ Errore: uno o più campi sono mancanti");
+        return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number, sex) VALUES (?,?,?,?,?,?,?)`
+    if (name.trim().length < 3) {
+        console.log("❌ Errore: Nome troppo corto");
+        return res.json({ error: 'The name must contain at least 3 characters' });
+    }
+    if (surname.trim().length < 3) {
+        console.log("❌ Errore: Cognome troppo corto");
+        return res.json({ error: 'The surname must contain at least 3 characters' });
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+        console.log("❌ Errore: Email non valida");
+        return res.json({ error: 'The email must contain at least one "@" and a "."' });
+    }
+    if (phone.trim().length < 10 || phone.trim().length > 15) {
+        console.log("❌ Errore: Numero di telefono non valido");
+        return res.json({ error: 'A telephone number is made up of numbers between 10 and 15' });
+    }
+    if (isNaN(phone)) {
+        console.log("❌ Errore: Il telefono contiene caratteri non numerici");
+        return res.json({ error: 'The telephone number can only consist of numbers' });
+    }
+    if (serial_number.trim().length !== 8) {
+        console.log("❌ Errore: Serial number errato");
+        return res.json({ error: 'The serial number must be 8 characters' });
+    }
 
-    connection_db.query(sqlAddDoctor, [name, surname, email, phone, office_address, serial_number, sex], (err, results2) => {
-        if (err) return res.status(500).json({ error: err });
-        if (results2.affectedRows === 0)
-            return res.status(404).json({ error: "Cannot add doctors" })
-        if (results2.affectedRows === 1)
-            return res.status(200).json({ success: "Doctor added with success" })
-    })
+    const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number, sex, img_url) VALUES (?,?,?,?,?,?,?,?)`;
+    console.log("🛠 Query SQL:", sqlAddDoctor);
+
+    connection_db.query(sqlAddDoctor, [name, surname, email, phone, office_address, serial_number, sex, img_url], (err, results) => {
+        if (err) {
+            console.log("❌ Errore MySQL:", err);
+            return res.status(500).json({ error: err });
+        }
+
+        console.log("✅ Risultato della query:", results);
+
+        if (results.affectedRows === 0) {
+            console.log("❌ Nessuna riga aggiunta");
+            return res.status(404).json({ error: "Cannot add doctor" });
+        }
+
+        console.log("🎉 Dottore aggiunto con successo!");
+        return res.status(200).json({ success: "Doctor added with success" });
+    });
 }
+
 
 function storeReview(req, res) {
     console.log("📩 Richiesta ricevuta! Body:", req.body);
