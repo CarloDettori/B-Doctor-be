@@ -138,7 +138,7 @@ function storeDoctor(req, res) {
         return res.json({ error: 'The surname must contain at least 3 characters' })
     } else if (!email.includes('@') || !email.includes('.')) {
         return res.json({ error: 'The email must contain at least one "@" and a "."' })
-    } else if (phone.trim().length < 11 || phone.trim().length > 15) {
+    } else if (phone.trim().length < 10 || phone.trim().length > 15) {
         return res.json({ error: 'A telephone number is made up of numbers between 10 and 15' })
     } else if (isNaN(phone)) {
         return res.json({ error: 'The telephone number can only consist of numbers' })
