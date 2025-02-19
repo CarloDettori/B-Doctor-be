@@ -142,8 +142,8 @@ function storeDoctor(req, res) {
         return res.json({ error: 'A telephone number is made up of numbers between 10 and 15' })
     } else if (isNaN(phone)) {
         return res.json({ error: 'The telephone number can only consist of numbers' })
-    } else if (serial_number.trim().length !== 7) {
-        return res.json({ error: 'The serial number must be 7 characters' })
+    } else if (serial_number.trim().length !== 8) {
+        return res.json({ error: 'The serial number must be 8 characters' })
     }
 
     const sqlAddDoctor = `INSERT INTO doctors (name, surname, email, phone, office_address, serial_number, sex) VALUES ("?","?","?","?","?","?","?")`
