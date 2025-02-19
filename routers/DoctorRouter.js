@@ -11,7 +11,7 @@ doctorRouter.get("/:id", show);
 specializationsRouter.get("/:id", showSpecialization);
 
 doctorRouter.post("/", storeDoctor);
-//doctorRouter.post("/review/:id", storeReview);
+doctorRouter.post("/:id/form", storeReview);
 
 doctorRouter.delete("/:id", destroyDoctor);
 doctorRouter.delete("/review/:id", destroyReview);

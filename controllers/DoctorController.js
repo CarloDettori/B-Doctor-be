@@ -156,6 +156,8 @@ function storeDoctor(req, res) {
 }
 
 function storeReview(req, res) {
+    console.log("📩 Richiesta ricevuta! Body:", req.body);
+    console.log("🆔 ID del dottore:", req.params.id);
 
     // Recuperiamo l'id dalla url che ci servirà per trovare l'id specifico del medico al quale vogliamo lasciare la recensione.
     const id = parseInt(req.params.id)
