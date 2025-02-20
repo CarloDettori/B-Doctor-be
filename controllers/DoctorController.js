@@ -77,14 +77,22 @@ function show(req, res) {
         //Altrimenti ritorna l'elemento ma prima dobbiamo estrarre le sue reviews
         if (results[0]) {
 
-            const sqlDoctorReviews = `SELECT id, name_patient, vote, description, DATE_FORMAT(creation_date, '%Y-%m-%d') AS creation_date FROM reviews WHERE id_doctor = ?;`; //preparo la query
+            const sqlDoctorReviews = `SELECT id, name_patient, vote, description, DATE_FORMAT(creation_date, '%Y-%m-%d') AS creation_date FROM reviews WHERE id_doctor = ?;` //preparo la query
             const doctor = results[0]; //salvo il dottore nella variabile doctor
 
             // Esecuzione query per le reviews
             connection_db.query(sqlDoctorReviews, [id], (err, results2) => {
                 if (err) return res.status(500).json({ error: err }); //Se c'è un errore ritorna un error 500
                 doctor.reviews = results2;  //Salvo le reviews nella variabile reviews
-                return res.json(doctor); //Ritorno l'elemento con le reviews aggiunte
+            });
+
+            const sqlDoctorSpecializations = `SELECT specializations.* FROM specializations JOIN x_doctor_specialization ON specializations.id = x_doctor_specialization.id_specialization  WHERE x_doctor_specialization.id_doctor = ?;` //preparo la query
+
+            // Esecuzione query per le reviews
+            connection_db.query(sqlDoctorSpecializations, [id], (err, results3) => {
+                if (err) return res.status(500).json({ error: err }); //Se c'è un errore ritorna un error 500
+                doctor.specializations = results3;  //Salvo le specializations nella variabile reviews
+                return res.json(doctor); //Ritorno l'elemento con le reviews e le specializations aggiunte
             });
         };
     });
