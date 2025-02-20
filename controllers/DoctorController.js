@@ -138,7 +138,7 @@ GROUP BY doctors.id`; //preparo la query
 function storeDoctor(req, res) {
     console.log("📩 Richiesta ricevuta per registrare un dottore:", req.body);
 
-    const { name, surname, email, phone, office_address, serial_number, sex, img_url } = req.body;
+    const { name, surname, email, phone, office_address, serial_number, sex, img_url, specializations } = req.body;
 
     if (!name || !surname || !email || !phone || !office_address || !serial_number || !sex) {
         console.log("❌ Errore: uno o più campi sono mancanti");
@@ -186,11 +186,27 @@ function storeDoctor(req, res) {
             return res.status(404).json({ error: "Cannot add doctor" });
         }
 
-        console.log("🎉 Dottore aggiunto con successo!");
-        return res.status(200).json({ success: "Doctor added with success" });
+        const doctorId = results.insertId;
+
+        if (specializations && specializations.length > 0) {
+            const sqlAddSpecializations = `INSERT INTO x_doctor_specialization (id_doctor, id_specialization) VALUES ?`;
+            const values = specializations.map(specId => [doctorId, specId]);
+
+            connection_db.query(sqlAddSpecializations, [values], (err, results) => {
+                if (err) {
+                    console.log("❌ Errore MySQL:", err);
+                    return res.status(500).json({ error: err });
+                }
+
+                console.log("✅ Specializzazioni aggiunte con successo!");
+                return res.status(200).json({ success: "Doctor and specializations added with success" });
+            });
+        } else {
+            console.log("🎉 Dottore aggiunto con successo!");
+            return res.status(200).json({ success: "Doctor added with success" });
+        }
     });
 }
-
 
 function storeReview(req, res) {
     console.log("📩 Richiesta ricevuta! Body:", req.body);
