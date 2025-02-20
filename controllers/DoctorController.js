@@ -206,7 +206,7 @@ function storeReview(req, res) {
     }
 
     // 3) CONTROLLO SULLA LUNGHEZZA DEI CARATTERI DELLA DESCRIZIONE E SUL CONTENUTO
-    description = description && description.trim() ? description : "No content available"
+    description = description && description.trim() ? description : " * No description *"
     if (description.length > 5000)
         return res.status(400).json({ error: 'The text must have max 5000 characters' });
 
