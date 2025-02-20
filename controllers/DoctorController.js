@@ -77,8 +77,7 @@ function show(req, res) {
         //Altrimenti ritorna l'elemento ma prima dobbiamo estrarre le sue reviews
         if (results[0]) {
 
-            const sqlDoctorReviews = `SELECT * FROM reviews
-            WHERE id_doctor = ?`; //preparo la query
+            const sqlDoctorReviews = `SELECT id, name_patient, vote, description, DATE_FORMAT(creation_date, '%Y-%m-%d') AS creation_date FROM reviews WHERE id_doctor = ?;`; //preparo la query
             const doctor = results[0]; //salvo il dottore nella variabile doctor
 
             // Esecuzione query per le reviews
