@@ -193,7 +193,7 @@ function storeReview(req, res) {
     const id = parseInt(req.params.id)
 
     // Destrutturiamo il body della richiesta.
-    let { name_patient, vote, description } = req.body;
+    let { name_patient, vote, description, creation_date } = req.body;
 
     // 1) CONTROLLO SUL CONTENUTO DEL NOME
     name_patient = name_patient && name_patient.trim() ? name_patient : "Anonymous"
@@ -211,10 +211,10 @@ function storeReview(req, res) {
         return res.status(400).json({ error: 'The text must have max 5000 characters' });
 
 
-    const sqlAddReview = ` INSERT INTO reviews (name_patient, vote, description, id_doctor)
-            VALUES (?,?,?,?) `
+    const sqlAddReview = ` INSERT INTO reviews (name_patient, vote, description, id_doctor, creation_date)
+            VALUES (?,?,?,?,?) `
 
-    connection_db.query(sqlAddReview, [name_patient, vote, description, id], (err, results) => {
+    connection_db.query(sqlAddReview, [name_patient, vote, description, id, creation_date], (err, results) => {
 
         if (err) { return res.status(500).json({ error: err }) }
         if (results.affectedRows === 0)
